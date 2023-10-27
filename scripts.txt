@@ -1,0 +1,77 @@
+-- 0 - Create a script that populates all of the database tables with sample data
+
+-- INSERT INTO students (s_sid, s_name, s_surname, s_email) VALUES ('77774988T','Peter', 'Petreli', 'pp63@devamp.com');
+
+-- INSERT INTO professors (p_sid, p_name, p_surname, p_email) VALUES ('87498490A','Diego', 'Garcia', 'dg001@devamp.com');
+
+-- INSERT INTO courses (c_name,c_professor_id) VALUES ('Electricity',2);
+
+-- INSERT INTO grades (g_course_id,g_student_id,g_grade) VALUES (1,1,ROUND(RAND()*10,1));
+
+-- ---------------------------
+
+-- 1 - The average grade that is given by each professor
+select p.p_surname, p.p_name, ROUND(AVG(g.g_grade),2) as Average
+from grades g 
+inner join courses c 
+on c.c_id = g.g_course_id 
+inner join professors p 
+on c.c_professor_id = p.p_id 
+where 1 group by c.c_professor_id  
+-- 
+
+-- 2 - The top grades for each student
+
+select s.s_surname, s.s_name, s.s_sid, ROUND(MAX(g.g_grade),2)
+from grades g 
+inner join students s 
+on g.g_student_id = s.s_id 
+where 1
+group by g.g_student_id 
+order by s.s_surname
+-- 
+
+-- 3 - Sort students by the courses that they are enrolled in
+select c.c_name, s.s_surname, s.s_name, s.s_sid
+from grades g 
+inner join courses c 
+on c.c_id = g.g_course_id 
+inner join students s 
+on g.g_student_id = s.s_id 
+where 1
+order by c.c_name, s.s_surname
+ 
+
+-- 
+
+-- 4 - Create a summary report of courses and their average grades, sorted by the most challenging course
+
+select c.c_name, ROUND(AVG(g.g_grade),2) as Average
+from grades g 
+inner join courses c 
+on c.c_id = g.g_course_id 
+where 1 group by g.g_course_id order by Average ASC
+
+-- 
+
+-- 5 - Finding which student and professor have the most courses in common
+
+
+select p.p_surname, p.p_name, s.s_surname, s.s_name, count(g.g_student_id) as total
+from grades g 
+inner join courses c 
+on c.c_id = g.g_course_id 
+inner join professors p 
+on c.c_professor_id = p.p_id 
+inner join students s 
+on g.g_student_id = s.s_id 
+where 1
+group by p.p_id, g.g_student_id 
+order by total desc 
+limit 1
+
+
+-- 
+
+
+
